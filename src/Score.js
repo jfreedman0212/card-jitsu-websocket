@@ -1,6 +1,7 @@
 import { Element } from './enums';
 import { cardColors } from './colors';
 import styled from 'styled-components';
+import ElementIcon from './ElementIcon';
 
 const ScoreCardListsContainer = styled.div`
     display: flex;
@@ -27,7 +28,7 @@ function ScoreList({ listOfColors, element }) {
             {
                 listOfColors.map((color, idx) => (
                     <ScoreCard key={idx} color={color}>
-                        {element[0]}
+                        <ElementIcon element={element} size="lg" />
                     </ScoreCard>
                 ))
             }

@@ -5,8 +5,8 @@ import App from './App';
 
 const GlobalStyle = createGlobalStyle`
   body {
-    font-family: monospace;
-    padding: 0;
+    font-family: "Lucida Console", Monaco, monospace;
+    padding: 2rem;
     margin: 0;
   }
 `;

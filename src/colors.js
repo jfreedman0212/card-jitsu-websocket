@@ -1,4 +1,4 @@
-import { Color, Element } from './enums';
+import { Color } from './enums';
 
 const cardColors = {
     [Color.RED]: '#e33c25',

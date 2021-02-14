@@ -1,17 +1,13 @@
 import styled from 'styled-components';
 import Score from './Score';
 import Card from './Card';
+import { useCallback, useEffect, useState } from 'react';
 
 const GameWindowWrapper = styled.main`
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
     display: grid;
     grid-template-areas:
-        "yourScore .            theirScore"
-        ".         roundOutcome .         "
+        "yourScore roundOutcome theirScore"
+        ".         active       .         "
         "hand      hand         hand      ";
     grid-template-rows: 1fr 1fr 1.25fr;
     grid-template-columns: repeat(3, 1fr);
@@ -34,7 +30,7 @@ const TheirScoreSection = styled(BaseScoreSection)`
 const CardsContainer = styled.section`
     grid-area: hand;
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     justify-content: center;
 `;
 
@@ -42,8 +38,19 @@ const RoundOutcomeContainer = styled.section`
     grid-area: roundOutcome;
 `;
 
-
 function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
+    const [activeCard, setActiveCard] = useState(null);
+
+    const playCard = useCallback(index => {
+        return () => {
+            setActiveCard(hand[index]);
+            onPlayCard && onPlayCard(index + 1);
+        };
+    }, [onPlayCard]);
+
+    // when the hand changes (each new web socket call), reset the active card to null
+    useEffect(() => setActiveCard(null), [hand]);
+
     return (
         <GameWindowWrapper>
             <YourScoreSection>
@@ -59,7 +66,8 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
                         <Card  
                             {...card}
                             key={`${card.element}-${card.value}-${card.color}`}
-                            onClick={() => onPlayCard && onPlayCard(idx + 1)}
+                            onClick={playCard(idx)}
+                            disabled={!!activeCard}
                         />
                     ))
                 }
