@@ -8,6 +8,7 @@ const GlobalStyle = createGlobalStyle`
         font-family: "Lucida Console", Monaco, monospace;
         padding: 2rem;
         margin: 0;
+        background: #a99173;
     }
 `;
 
