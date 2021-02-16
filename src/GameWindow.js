@@ -3,6 +3,8 @@ import Score from './Score';
 import Card from './Card';
 import { useCallback, useEffect, useState } from 'react';
 import { RoundOutcome } from './enums';
+import { useStateMachine } from 'little-state-machine';
+import { endGame } from './actions';
 
 const GameWindowWrapper = styled.main`
     display: grid;
@@ -76,6 +78,7 @@ function RoundOutcomeDisplay({ roundOutcome }) {
 function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
     const [activeCardId, setActiveCardId] = useState(null);
     const [showRoundOutcome, setShowRoundOutcome] = useState(false);
+    const { actions } = useStateMachine({ endGame });
 
     const playCard = useCallback(index => {
         return () => {
@@ -91,6 +94,14 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
         const timeoutId = setTimeout(() => setShowRoundOutcome(false), 5000);
         return () => clearInterval(timeoutId);
     }, [hand]);
+
+    // when the game is over AND the message has disappeared, navigate back to the home page
+    useEffect(() => {
+        const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
+        if (isGameOver && !showRoundOutcome) {
+            actions.endGame(roundOutcome === RoundOutcome.WIN_GAME);
+        }
+    }, [roundOutcome, showRoundOutcome, actions.endGame]);
 
     const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
 

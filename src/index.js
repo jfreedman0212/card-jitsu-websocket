@@ -1,7 +1,9 @@
+import { createStore, StateMachineProvider } from 'little-state-machine';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createGlobalStyle } from 'styled-components';
 import App from './App';
+import { Pages } from './actions';
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -12,10 +14,32 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+function log(state) {
+    console.debug(state);
+    return state;
+}
+
+// TODO: if we ever want to persist this data, can have a middleware that sends data to
+// the server.
+createStore(
+    {
+        currentPage: Pages.HOME,
+        wins: 0,
+        totalGames: 0,
+    }, 
+    {
+        name: '__CardJitsu_LSM__',
+        middleWares: [log],
+        storageType: localStorage,
+    }
+);
+
 ReactDOM.render(
     <React.StrictMode>
-      <GlobalStyle />
-      <App />
+        <GlobalStyle />
+        <StateMachineProvider>
+            <App />
+        </StateMachineProvider>
     </React.StrictMode>,
     document.getElementById('root')
 );
