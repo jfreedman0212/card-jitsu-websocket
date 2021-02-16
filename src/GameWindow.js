@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Score from './Score';
 import Card from './Card';
 import { useCallback, useEffect, useState } from 'react';
+import { RoundOutcome } from './enums';
 
 const GameWindowWrapper = styled.main`
     display: grid;
@@ -14,11 +15,8 @@ const GameWindowWrapper = styled.main`
 `;
 
 const BaseScoreSection = styled.div`
-    /* background-color: gray; */
     text-align: center;
     padding: 1rem;
-    /* border-radius: 10px;
-    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.25); */
 `;
 
 const YourScoreSection = styled(BaseScoreSection)`
@@ -38,30 +36,63 @@ const CardsContainer = styled.section`
 
 const RoundOutcomeContainer = styled.section`
     grid-area: roundOutcome;
+    align-self: center;
+    text-align: center;
+    font-size: 3rem;
 `;
 
 const ScoreSectionHeader = styled.h2`
     
 `;
 
+function RoundOutcomeDisplay({ roundOutcome }) {
+    let message;
+    switch (roundOutcome) {
+        case RoundOutcome.WIN_GAME:
+            message = 'You won the game!';
+            break;
+        case RoundOutcome.LOSE_GAME:
+            message = 'You lost the game...';
+            break;
+        case RoundOutcome.WIN_ROUND:
+            message = 'You won the round!';
+            break;
+        case RoundOutcome.LOSE_ROUND:
+            message = 'You lost the round...';
+            break;
+        case RoundOutcome.TIE:
+            message = 'You tied';
+            break;
+        default:
+            throw new Error(`Invalid Round Outcome value of ${roundOutcome}`);
+    }
+    return (
+        <RoundOutcomeContainer>
+            {message}
+        </RoundOutcomeContainer>
+    );
+}
+
 function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
-    const [activeCard, setActiveCard] = useState(null);
+    const [activeCardId, setActiveCardId] = useState(null);
     const [showRoundOutcome, setShowRoundOutcome] = useState(false);
 
     const playCard = useCallback(index => {
         return () => {
-            setActiveCard(hand[index]);
+            setActiveCardId(hand[index].id);
             onPlayCard && onPlayCard(index + 1);
         };
     }, [onPlayCard]);
 
     // when the hand changes (each new web socket call), reset the active card to null
     useEffect(() => {
-        setActiveCard(null);
+        setActiveCardId(null);
         setShowRoundOutcome(true);
-        const timeoutId = setTimeout(() => setShowRoundOutcome(false), 10000);
+        const timeoutId = setTimeout(() => setShowRoundOutcome(false), 5000);
         return () => clearInterval(timeoutId);
     }, [hand]);
+
+    const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
 
     return (
         <GameWindowWrapper>
@@ -73,20 +104,16 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
                 <ScoreSectionHeader>Their Score</ScoreSectionHeader>
                 <Score {...theirScore} />
             </TheirScoreSection>
-            {
-                roundOutcome && showRoundOutcome &&
-                    <RoundOutcomeContainer>
-                        {roundOutcome}
-                    </RoundOutcomeContainer>
-            }
+            {roundOutcome && showRoundOutcome && <RoundOutcomeDisplay roundOutcome={roundOutcome} />}
             <CardsContainer>
                 {
                     hand.map((card, idx) => (
                         <Card  
                             {...card}
-                            key={`${card.element}-${card.value}-${card.color}`}
+                            key={card.id}
                             onClick={playCard(idx)}
-                            disabled={!!activeCard}
+                            disabled={!!activeCardId || isGameOver}
+                            active={card.id === activeCardId}
                         />
                     ))
                 }

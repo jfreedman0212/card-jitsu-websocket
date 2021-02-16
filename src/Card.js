@@ -47,6 +47,7 @@ const CardWrapper = styled.button`
     color: black;
     padding: 0;
     background-image: url(${props => props.iconImage});
+    transform: translateY(${props => props.active ? '-30px' : '0'});
 
     &:hover:not(:disabled) {
         transform: translateY(-30px);
@@ -62,10 +63,16 @@ const CardWrapper = styled.button`
     }
 `;
 
-function Card({ color, element, value, onClick, disabled }) {
+function Card({ color, element, value, onClick, disabled, active }) {
     const [iconNumber,] = useState(() => Math.floor(Math.random() * 4));
     return (
-        <CardWrapper onClick={onClick} color={color} disabled={disabled} iconImage={penguinIcons[iconNumber]}>
+        <CardWrapper 
+            onClick={onClick}
+            color={color} 
+            disabled={disabled} 
+            iconImage={penguinIcons[iconNumber]}
+            active={active}
+        >
             <CornerLabel>
                 <ElementIcon element={element} size="2x" />
                 <ValueItem>{value}</ValueItem>
