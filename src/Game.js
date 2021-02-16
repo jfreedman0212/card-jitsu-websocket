@@ -3,7 +3,7 @@ import useWebSocket from 'react-use-websocket';
 import GameWindow from './GameWindow';
 
 function Game() {
-    const { sendMessage, lastJsonMessage } = useWebSocket('ws://localhost:8080/game');
+    const { sendMessage, lastJsonMessage } = useWebSocket(`ws://${process.env.REACT_APP_SERVER_URL}/game`);
 
     const playCard = useCallback(choice => {
       sendMessage(choice);
