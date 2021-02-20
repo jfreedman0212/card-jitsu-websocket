@@ -93,17 +93,19 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
     useEffect(() => {
         setActiveCardId(null);
         setShowRoundOutcome(true);
-        const timeoutId = setTimeout(() => setShowRoundOutcome(false), 5000);
-        return () => clearInterval(timeoutId);
     }, [hand]);
 
     // when the game is over AND the message has disappeared, navigate back to the home page
     useEffect(() => {
-        const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
-        if (isGameOver && !showRoundOutcome) {
-            actions.endGame(roundOutcome === RoundOutcome.WIN_GAME);
-            history.push("/");
-        }
+        const timeoutId = setTimeout(() => {
+            const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
+            setShowRoundOutcome(false);
+            if (isGameOver) {
+                actions.endGame(roundOutcome === RoundOutcome.WIN_GAME);
+                history.push("/");
+            }
+        }, 5000);
+        return () => clearInterval(timeoutId);
     }, [roundOutcome, showRoundOutcome, actions.endGame, history]);
 
     const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
