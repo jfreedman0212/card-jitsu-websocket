@@ -1,8 +1,8 @@
 import { useStateMachine } from "little-state-machine";
-import { startGame } from './actions';
+import { Link } from 'react-router-dom';
 
 function Home() {
-    const { actions, state } = useStateMachine({ startGame });
+    const { state } = useStateMachine();
     return (
         <>
             <h1>Welcome to Card Jitsu!</h1>
@@ -14,7 +14,9 @@ function Home() {
                 <b>Total Games:</b>
                 {state.totalGames}
             </p>
-            <button onClick={actions.startGame}>Join a random game!</button>
+            <Link to="/game">
+                <button>Join a random game!</button>
+            </Link>
         </>
     );
 }

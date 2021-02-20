@@ -3,7 +3,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createGlobalStyle } from 'styled-components';
 import App from './App';
-import { Pages } from './actions';
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -23,7 +22,6 @@ function log(state) {
 // the server.
 createStore(
     {
-        currentPage: Pages.HOME,
         wins: 0,
         totalGames: 0,
     }, 

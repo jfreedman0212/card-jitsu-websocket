@@ -1,17 +1,20 @@
-import { useStateMachine } from "little-state-machine";
-import { Pages } from "./actions";
 import Home from './Home';
 import Game from './Game';
+import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 
 function App() {
-    const { state } = useStateMachine();
-    if (state.currentPage === Pages.HOME) {
-        return <Home />;
-    }
-    else if (state.currentPage === Pages.GAME) {
-        return <Game />;
-    }
-    throw new Error(`Unexpected currentPage value: ${state.currentPage}`);
+    return (
+        <BrowserRouter>
+            <Switch>
+                <Route exact path="/" component={Home} />
+                <Route path="/game" component={Game} />
+                <Route path="*">
+                    <h2>404 Page Not Found</h2>
+                    <Link to="/">Go Home</Link>
+                </Route>
+            </Switch>
+        </BrowserRouter>
+    );
 }
 
 export default App;

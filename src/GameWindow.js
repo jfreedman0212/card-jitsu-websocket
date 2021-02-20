@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { RoundOutcome } from './enums';
 import { useStateMachine } from 'little-state-machine';
 import { endGame } from './actions';
+import { useHistory } from 'react-router-dom';
 
 const GameWindowWrapper = styled.main`
     display: grid;
@@ -79,6 +80,7 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
     const [activeCardId, setActiveCardId] = useState(null);
     const [showRoundOutcome, setShowRoundOutcome] = useState(false);
     const { actions } = useStateMachine({ endGame });
+    const history = useHistory();
 
     const playCard = useCallback(index => {
         return () => {
@@ -100,6 +102,7 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
         const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
         if (isGameOver && !showRoundOutcome) {
             actions.endGame(roundOutcome === RoundOutcome.WIN_GAME);
+            history.push("/");
         }
     }, [roundOutcome, showRoundOutcome, actions.endGame]);
 
