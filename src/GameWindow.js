@@ -87,7 +87,7 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
             setActiveCardId(hand[index].id);
             onPlayCard && onPlayCard(index + 1);
         };
-    }, [onPlayCard]);
+    }, [onPlayCard, hand]);
 
     // when the hand changes (each new web socket call), reset the active card to null
     useEffect(() => {
@@ -104,7 +104,7 @@ function GameWindow({ hand, yourScore, theirScore, roundOutcome, onPlayCard }) {
             actions.endGame(roundOutcome === RoundOutcome.WIN_GAME);
             history.push("/");
         }
-    }, [roundOutcome, showRoundOutcome, actions.endGame]);
+    }, [roundOutcome, showRoundOutcome, actions.endGame, history]);
 
     const isGameOver = roundOutcome === RoundOutcome.LOSE_GAME || roundOutcome === RoundOutcome.WIN_GAME;
 
